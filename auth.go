@@ -17,11 +17,11 @@ func CheckToken(token string) (bool, error) {
 
 	resp, err := http.Get("https://goherokuauth.herokuapp.com/api/v1/auth?token=" + token)
 	if err != nil {
-		log.Println("error accessing auth web service")
+		log.Println(err)
 
 		return false, errors.New("error accessing auth web service")
 	}
-	defer resp.Body.Close()
+	resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 		log.Println("token is invalid")
