@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 )
 
 // structure of POST json
@@ -63,12 +64,37 @@ func dataGetHandler(w http.ResponseWriter, r *http.Request) {
 
 // dataPostHandler handles POST method
 func dataPostHandler(w http.ResponseWriter, r *http.Request) {
+	var token string
+	tokens, ok := r.Header["Authorization"]
+	if ok && len(tokens) > 0 {
+		token = strings.TrimPrefix(tokens[0], "Bearer ")
+	}
+
+	if len(token) == 0 {
+		log.Println("No token found")
+
+		w.WriteHeader(http.StatusBadRequest)
+		io.WriteString(w, "No token found\n")
+
+		return
+	}
+
+	validToken, errT := CheckToken(token)
+	if !validToken || errT != nil {
+		log.Println(errT)
+
+		w.WriteHeader(http.StatusBadRequest)
+		io.WriteString(w, errT.Error())
+
+		return
+	}
+
 	decoder := json.NewDecoder(r.Body)
 
 	var dpr dataPostRequest
 	errD := decoder.Decode(&dpr)
 	if errD != nil {
-		panic(errD)
+		log.Println(errD)
 
 		w.WriteHeader(http.StatusInternalServerError)
 		io.WriteString(w, "Internal Server Error\n")
@@ -78,7 +104,7 @@ func dataPostHandler(w http.ResponseWriter, r *http.Request) {
 
 	done, errI := SetData(dpr.Field, dpr.Value)
 	if !done || errI != nil {
-		panic(errI)
+		log.Println(errI)
 
 		w.WriteHeader(http.StatusInternalServerError)
 		io.WriteString(w, "Internal Server Error\n")

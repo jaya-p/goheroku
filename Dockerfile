@@ -1,6 +1,8 @@
-# Build for heroku: heroku container:push web -a myexip
-# Push for heroku: heroku container:release web -a myexip
-# See logs in heroku: heroku logs --tail -a myexip
+# Docker build: docker build -t gh .
+# Set app: heroku git:remote --app <app-name>
+# Build for heroku: heroku container:push web <app-name>
+# Push for heroku: heroku container:release web <app-name>
+# See logs in heroku: heroku logs --tail
 
 # This Dockerfile use multi stage approach. STAGE 1 is to build the binary
 #    and STAGE 2 is to have smallest image possible by including only necessary binary
