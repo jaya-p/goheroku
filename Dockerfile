@@ -8,24 +8,23 @@
 #    and STAGE 2 is to have smallest image possible by including only necessary binary
 
 # STAGE 1 is to build the binary
-# Use golang-based image for container; golang version 1.12.4
-FROM golang:1.12.4-alpine AS builder
+# Use golang-based image for container; golang version 1.14.4
+FROM golang:1.14.4-alpine AS builder
 
-# GO111MODULE=on to enable go modules for downloading dependencies
 # CGO_ENABLED=0 to include all linked library included in the output binary
-ENV GO111MODULE=on \  
-  CGO_ENABLED=0 
+ENV CGO_ENABLED=0 
 
 # Add git executable in container
 RUN apk add --no-cache git
 
 # Copy webserver go file in local computer to container
-COPY ./driver/restapiwebserver/mainrestapi.go /go/src/
+COPY ./driver/mainrestapi.go /go/src/
 
 # Set working directory in container
 WORKDIR /go
 
 # Build the application
+RUN go get github.com/jaya-p/goheroku
 RUN go build -o bin/main src/mainrestapi.go
 
 # STAGE 2 is to have smallest image possible by including only necessary binary

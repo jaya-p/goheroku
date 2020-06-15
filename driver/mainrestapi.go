@@ -1,5 +1,5 @@
-// build: go build driver/restapiwebserver/mainrestapi.go
-// run: go run driver/restapiwebserver/mainrestapi.go
+// build: go build driver/mainrestapi.go
+// run: go run driver/mainrestapi.go
 // test:
 //				GET: curl http://localhost:8080/api/v1/helloworld
 //				POST: curl -d '{"name":"indonesia"}' -H "Content-Type: application/json" -X POST http://localhost:8080/api/v1/helloworld
