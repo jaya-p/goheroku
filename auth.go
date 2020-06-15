@@ -1,6 +1,7 @@
 package goheroku
 
 import (
+	"crypto/tls"
 	"errors"
 	"log"
 	"net/http"
@@ -15,7 +16,12 @@ func CheckToken(token string) (bool, error) {
 		return false, errors.New("token is empty")
 	}
 
-	resp, err := http.Get("https://goherokuauth.herokuapp.com/api/v1/auth?token=" + token)
+	//disable ssl verification, due to using SCRATCH docker image
+	t := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: t}
+	resp, err := client.Get("https://goherokuauth.herokuapp.com/api/v1/auth?token=" + token)
 	if err != nil {
 		log.Println(err)
 
